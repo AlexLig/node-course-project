@@ -5,7 +5,9 @@ const logger = require("./logger");
 const genres = require("./api/genres");
 
 const app = express();
-mongoose.connect("mongodb://localhost/videoClub")
+mongoose.connect("mongodb://localhost/videoClub", {
+    useNewUrlParser: true
+  })
   .then(() => console.log('\n Connected to MongoDB \n'))
   .catch(() => console.error('\n Could NOT connect to MongoDB \n'));
 
@@ -15,4 +17,4 @@ app.use("/api/genres", genres);
 
 
 let port = process.env.PORT || 3000;
-app.listen(port);
+app.listen(port, () => console.log(`\n Listening to PORT:${port}`));
