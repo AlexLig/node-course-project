@@ -1,9 +1,10 @@
-//@ts-check
+
 const express = require("express");
-const app = express();
+
 const logger = require("./logger");
 const genres = require("./api/genres");
 
+const app = express();
 
 app.use(express.json());
 app.use(logger);
