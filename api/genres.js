@@ -2,6 +2,8 @@ const express = require('express');
 const Joi = require('joi');
 const mongoose = require('mongoose');
 
+const router = express.Router();
+
 const Genre = mongoose.model('Genre', new mongoose.Schema({
   name: {
     type: String,
@@ -11,7 +13,6 @@ const Genre = mongoose.model('Genre', new mongoose.Schema({
   }
 }));
 
-const router = express.Router();
 
 function validateGenre(body) {
   const schema = {
@@ -53,10 +54,10 @@ router.route("/:id")
     res.send(genre);
   })
   .put(async (req, res) => {
-    const validation = validateGenre(req.body);
+    const {error} = validateGenre(req.body);
 
-    if (validation.error) {
-      return res.status(400).send(`400 bad request. ${validation.error.details[0].message}`);
+    if (error) {
+      return res.status(400).send(`400 bad request. ${error.details[0].message}`);
     }
 
     const genre = await Genre.findByIdAndUpdate(req.params.id, {
@@ -75,7 +76,7 @@ router.route("/:id")
     const genre = await Genre.findByIdAndRemove(req.params.id);
 
     if (!genre) {
-      return res.status(404).send(`404 . ${req.params.genre} genre was not found`);
+      return res.status(404).send(`404 genre was not found`);
     }
 
     res.send(genre);
