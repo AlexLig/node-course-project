@@ -39,10 +39,10 @@ router.route('/')
     res.send(customers)
   })
   .post(async (req, res) => {
-    const {
-      error
-    } = validateCustomer(req.body)
-    if (error) return res.status(400).send(error.details[0].message)
+    const { error } = validateCustomer(req.body)
+    if (error){ 
+      return res.status(400).send(error.details[0].message)
+    }
 
     let customer = new Customer({
       isGold: req.body.isGold,
@@ -52,7 +52,7 @@ router.route('/')
     customer = await customer.save()
     res.send(customer)
   })
-router.route('/id')
+router.route('/:id')
   .get(async (req, res) => {
     const customer = await Customer.findById(req.params.id)
     if (!customer) res.status(404).send('Customer with given Id was not found')
@@ -95,5 +95,5 @@ router.route('/id')
     }
     res.send(customer)
   })
-  
+
   module.exports = router
