@@ -1,36 +1,7 @@
 const express = require('express');
-const Joi = require('joi')
-const mongoose = require('mongoose')
+const { Customer, validate} = require('../models/customer')
 
 const router = express.Router();
-
-// mongoose model
-const Customer = mongoose.model('Customer', new mongoose.Schema({
-  isGold: {
-    type: Boolean,
-    default: false
-  },
-  name: {
-    type: String,
-    require: true
-  },
-  phone: {
-    type: String,
-    minlength: 10,
-    maxlength: 10,
-    required: true,
-  }
-
-}))
-// request.body validation and schema with Joi
-function validateCustomer(body) {
-  const schema = {
-    isGold: Joi.boolean().default(false),
-    name: Joi.string().required(),
-    phone: Joi.string().required()
-  }
-  return Joi.validate(body, schema)
-}
 
 // End Points
 router.route('/')
@@ -39,7 +10,7 @@ router.route('/')
     res.send(customers)
   })
   .post(async (req, res) => {
-    const { error } = validateCustomer(req.body)
+    const { error } = validate(req.body)
     if (error){ 
       return res.status(400).send(error.details[0].message)
     }
@@ -59,7 +30,7 @@ router.route('/:id')
     res.send(customer)
   })
   .put(async (req, res) => {
-    const { error } = validateCustomer(req.body)
+    const { error } = validate(req.body)
     if (error) {
       return (
         res
