@@ -3,6 +3,7 @@ const express = require('express');
 
 const genres = require('./routes/genres');
 const customers = require('./routes/customers')
+const movies = require('./routes/movies')
 
 const app = express();
 mongoose.connect('mongodb://localhost/videoClub', {
@@ -12,8 +13,9 @@ mongoose.connect('mongodb://localhost/videoClub', {
   .catch(() => console.error('\n Could NOT connect to MongoDB \n'));
 
 app.use(express.json());
-app.use('/routes/genres', genres);
-app.use('/routes/customers',customers);
+app.use('/api/genres', genres);
+app.use('/api/customers', customers);
+app.use('/api/movies', movies)
 
 let port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`\n Listening to PORT:${port}`));
+app.listen(port, () => console.log(`\n Listening to PORT:${port}`)); 
