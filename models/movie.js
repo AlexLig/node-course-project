@@ -1,9 +1,8 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
 const { genreSchema } = require('./genre')
-// Embeded Documents aproach
-
-const Movie = mongoose.model('Movie', new mongoose.Schema({
+// movie schema
+const movieSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -27,7 +26,10 @@ const Movie = mongoose.model('Movie', new mongoose.Schema({
     min: 0,
     max: 255
   }
-}))
+}
+)
+// Movie model
+const Movie = mongoose.model('Movie', movieSchema)
 
 function validateMovie(movie){
   const schema = {
@@ -41,3 +43,4 @@ function validateMovie(movie){
 
 exports.Movie = Movie
 exports.validate = validateMovie
+exports.movieSchema = movieSchema
