@@ -19,7 +19,7 @@ router.route('/')
       return res.status(404).send('Invalid genre.')
     } 
 
-    let movie = new Movie({
+    const movie = new Movie({
       title: req.body.title,
       genre: {
         _id: genre._id,
@@ -28,7 +28,7 @@ router.route('/')
       numberInStock: req.body.numberInStock,
       dailyRentalRate: req.body.dailyRentalRate
     })
-    movie = await movie.save()
+    await movie.save()
     res.send(movie)
   })
   
@@ -60,7 +60,7 @@ router.route('/:id')
       dailyRentalRate: req.body.dailyRentalRate
     }
 
-    let movie = await Movie.findByIdAndUpdate(req.params.id, movieUpdated, {new: true})
+    const movie = await Movie.findByIdAndUpdate(req.params.id, movieUpdated, {new: true})
 
     if(!movie){
       return res.status(404).send('Movie with the given id was not found')
