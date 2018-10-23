@@ -1,3 +1,4 @@
+const config = require('config')
 const express = require('express')
 const { User} = require('../models/user')
 const _ = require('lodash')
@@ -22,7 +23,7 @@ router.route('/')
     if(!validPassword){
       return res.status(400).send('Invalid email or password')
     }
-    const token = jwt.sign({_id: user._id}, 'jwtPrivateKey') // hardCoded private key for demonstration. NEVER store secret on source code
+    const token = jwt.sign({_id: user._id}, config.get('jwtPrivateKey'))
     res.send(token)
   })
 
