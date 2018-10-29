@@ -2,6 +2,7 @@ const express = require('express');
 const { Customer, validate} = require('../models/customer')
 
 const router = express.Router();
+const auth = require('../middleware/auth')
 
 // End Points
 router.route('/')
@@ -9,7 +10,7 @@ router.route('/')
     const customers = await Customer.find().sort('name')
     res.send(customers)
   })
-  .post(async (req, res) => {
+  .post(auth, async (req, res) => {
     const { error } = validate(req.body)
     if (error){ 
       return res.status(400).send(error.details[0].message)
@@ -29,7 +30,7 @@ router.route('/:id')
     if (!customer) res.status(404).send('Customer with given Id was not found')
     res.send(customer)
   })
-  .put(async (req, res) => {
+  .put(auth, async (req, res) => {
     const { error } = validate(req.body)
     if (error) {
       return (
@@ -55,7 +56,7 @@ router.route('/:id')
     }
     res.send(customer)
   })
-  .delete(async (req, res) => {
+  .delete(auth, async (req, res) => {
     const customer = await Customer.findByIdAndRemove(req.params.id)
     if(!customer){
       return(
