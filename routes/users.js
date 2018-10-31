@@ -6,16 +6,16 @@ const { User, validate} = require('../models/user')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const router = express.Router();
-
+const asyncMiddleware = require('../middleware/async')
 // End Points
 router.route('/me')
-  .get(auth, async (req, res)=>{
+  .get(auth, asyncMiddleware(async (req, res)=>{
     // @ts-ignore
     const user = await User.findById(req.user._id).select('-password')
     res.send(user)
-  })
+  }))
 router.route('/')
-  .post(async (req, res) => {
+  .post(asyncMiddleware(async (req, res) => {
     const { error } = validate(req.body)
     if (error){ 
       return res.status(400).send(error.details[0].message)
@@ -33,7 +33,7 @@ router.route('/')
     const token = user.generateAuthToken()
 
     res.header('x-auth-token',token).send(_.pick(user, ['_id','name','email']))
-  })
+  }))
   
 
   module.exports = router

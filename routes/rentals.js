@@ -6,16 +6,16 @@ const { Movie } =require('../models/movie')
 const router = express.Router()
 const Fawn = require('fawn')
 const auth = require('../middleware/auth')
-
+const asyncMiddleware = require('../middleware/async')
 
 Fawn.init(mongoose)
 
 router.route('/')
-  .get(async (req, res) => {
+  .get(asyncMiddleware(async (req, res) => {
     const rentals = await Rental.find().sort('-dateOut')
     res.send(rentals)
-  })
-  .post(auth, async (req, res) => {
+  }))
+  .post(auth, asyncMiddleware(async (req, res) => {
     const { error } = validate( req.body )
     if (error){
       return res.status(400).send(error.details[0].message)
@@ -56,15 +56,15 @@ router.route('/')
       res.status(500).send('Something went wrong')
     }
     
-  })
+  }))
 
 router.route('/:id')
-  .get(async (req, res) => {
+  .get(asyncMiddleware(async (req, res) => {
     const rental = await Rental.findById(req.params.id)
     if ( !rental){
       return res.status(404).send('Rental with given id was not found')
     }
     res.send(rental)
-  })
+  }))
 
   module.exports = router

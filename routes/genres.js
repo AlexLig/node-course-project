@@ -1,3 +1,4 @@
+const asyncMiddleware = require('../middleware/async')
 const express = require('express');
 const {
   Genre,
@@ -6,13 +7,14 @@ const {
 const auth = require('../middleware/auth')
 const isAdmin = require('../middleware/isAdmin')
 
+
 const router = express.Router();
 router.route("/")
-  .get(async (req, res) => {
+  .get(asyncMiddleware(async (req, res, next) => {
     const genres = await Genre.find().sort('name');
     res.send(genres);
-  })
-  .post(auth, async (req, res) => {
+  }))
+  .post(auth, asyncMiddleware(async (req, res) => {
     const {
       error
     } = validate(req.body)
@@ -29,10 +31,10 @@ router.route("/")
 
     await genre.save();
     res.send(genre);
-  });
+  }));
 
 router.route("/:id")
-  .get(async (req, res) => {
+  .get(asyncMiddleware(async (req, res) => {
     const genre = await Genre.findById(req.params.id);
 
     if (!genre) {
@@ -40,8 +42,8 @@ router.route("/:id")
     }
 
     res.send(genre);
-  })
-  .put(auth, async (req, res) => {
+  }))
+  .put(auth, asyncMiddleware(async (req, res) => {
     const {
       error
     } = validate(req.body);
@@ -61,8 +63,8 @@ router.route("/:id")
     }
 
     res.send(genre);
-  })
-  .delete([auth, isAdmin], async (req, res) => {
+  }))
+  .delete([auth, isAdmin], asyncMiddleware(async (req, res) => {
     const genre = await Genre.findByIdAndRemove(req.params.id);
 
     if (!genre) {
@@ -70,7 +72,7 @@ router.route("/:id")
     }
 
     res.send(genre);
-  });
+  }))
 
 
 module.exports = router;

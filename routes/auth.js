@@ -1,4 +1,4 @@
-
+const asyncMiddleware = require('../middleware/async')
 const express = require('express')
 const { User} = require('../models/user')
 const _ = require('lodash')
@@ -9,7 +9,7 @@ const Joi = require('joi')
 
 // End Points
 router.route('/')
-  .post(async (req, res) => {
+  .post(asyncMiddleware(async (req, res) => {
     const { error } = validate(req.body)
     if (error){ 
       return res.status(400).send(error.details[0].message)
@@ -26,7 +26,7 @@ router.route('/')
     
     const token = user.generateAuthToken();
     res.send(token)
-  })
+  }))
 
   function validate(user){
     const schema = {
