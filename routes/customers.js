@@ -62,7 +62,7 @@ router.route('/:id')
       return(
         res
           .status(404)
-          .send('customer with the given id was not found')
+          .send('Customer with the given id was not found')
       )
     }
     res.send(customer)
