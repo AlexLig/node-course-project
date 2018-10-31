@@ -9,7 +9,7 @@ const Joi = require('joi')
 
 // End Points
 router.route('/')
-  .post(asyncMiddleware(async (req, res) => {
+  .post(async (req, res) => {
     const { error } = validate(req.body)
     if (error){ 
       return res.status(400).send(error.details[0].message)
@@ -26,7 +26,7 @@ router.route('/')
     
     const token = user.generateAuthToken();
     res.send(token)
-  }))
+  })
 
   function validate(user){
     const schema = {

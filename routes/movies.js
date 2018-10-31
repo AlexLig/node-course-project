@@ -1,26 +1,32 @@
 const express = require('express')
-const { Movie, validate} = require('../models/movie')
-const { Genre } = require('../models/genre')
+const {
+  Movie,
+  validate
+} = require('../models/movie')
+const {
+  Genre
+} = require('../models/genre')
 const router = express.Router()
 const auth = require('../middleware/auth')
 const isAdmin = require('../middleware/isAdmin')
-const asyncMiddleware = require('../middleware/async')
 
 router.route('/')
-  .get(asyncMiddleware(async (req, res) => {
+  .get(async (req, res) => {
     const movies = await Movie.find().sort('title')
     res.send(movies)
-  }))
-  .post(auth, asyncMiddleware(async (req, res) => {
-    const { error } = validate(req.body)
-    if (error){
+  })
+  .post(auth, async (req, res) => {
+    const {
+      error
+    } = validate(req.body)
+    if (error) {
       return res.status(400).send(error.details[0].message)
     }
 
     const genre = await Genre.findById(req.body.genreId)
-    if(!genre){
+    if (!genre) {
       return res.status(404).send('Invalid genre.')
-    } 
+    }
 
     const movie = new Movie({
       title: req.body.title,
@@ -33,26 +39,28 @@ router.route('/')
     })
     await movie.save()
     res.send(movie)
-  }))
-  
+  })
+
 router.route('/:id')
-  .get(asyncMiddleware(async (req, res) => {
+  .get(async (req, res) => {
     const movie = await Movie.findById(req.params.id)
-    if(!movie){
+    if (!movie) {
       return res.status(404).send('Movie with the given id was not found')
     }
     res.send(movie)
-  }))
-  .put(auth, asyncMiddleware(async (req, res) => {
-    const { error } = validate(req.body)
-    if (error){
+  })
+  .put(auth, async (req, res) => {
+    const {
+      error
+    } = validate(req.body)
+    if (error) {
       return res.status(400).send(error.details[0].message)
     }
 
     const genre = await Genre.findById(req.body.genreId)
-    if(!genre){
+    if (!genre) {
       return res.status(400).send('Invalid genre.')
-    } 
+    }
     const movieUpdated = {
       title: req.body.title,
       genre: {
@@ -63,19 +71,20 @@ router.route('/:id')
       dailyRentalRate: req.body.dailyRentalRate
     }
 
-    const movie = await Movie.findByIdAndUpdate(req.params.id, movieUpdated, {new: true})
+    const movie = await Movie.findByIdAndUpdate(req.params.id, movieUpdated, {
+      new: true
+    })
 
-    if(!movie){
+    if (!movie) {
       return res.status(404).send('Movie with the given id was not found')
     }
     res.send(movie)
-  }))
-  .delete([auth, isAdmin], asyncMiddleware(async (req, res) => {
+  })
+  .delete([auth, isAdmin], async (req, res) => {
     const movie = await Movie.findByIdAndRemove(req.params.id)
-    if(!movie){
+    if (!movie) {
       return res.status(404).send('Movie with the given Id was not found')
     }
     res.send(movie)
-
-  }))
-  module.exports = router
+  })
+module.exports = router

@@ -1,17 +1,16 @@
 const express = require('express');
 const { Customer, validate} = require('../models/customer')
-const asyncMiddleware = require('../middleware/async')
 const router = express.Router();
 const auth = require('../middleware/auth')
 const isAdmin = require('../middleware/isAdmin')
 
 // End Points
 router.route('/')
-  .get(asyncMiddleware(async (req, res) => {
+  .get(async (req, res) => {
     const customers = await Customer.find().sort('name')
     res.send(customers)
-  }))
-  .post(auth, asyncMiddleware(async (req, res) => {
+  })
+  .post(auth, async (req, res) => {
     const { error } = validate(req.body)
     if (error){ 
       return res.status(400).send(error.details[0].message)
@@ -24,14 +23,14 @@ router.route('/')
     })
     await customer.save()
     res.send(customer)
-  }))
+  })
 router.route('/:id')
-  .get(asyncMiddleware(async (req, res) => {
+  .get(async (req, res) => {
     const customer = await Customer.findById(req.params.id)
     if (!customer) res.status(404).send('Customer with given Id was not found')
     res.send(customer)
-  }))
-  .put(auth, asyncMiddleware(async (req, res) => {
+  })
+  .put(auth, async (req, res) => {
     const { error } = validate(req.body)
     if (error) {
       return (
@@ -56,8 +55,8 @@ router.route('/:id')
       )
     }
     res.send(customer)
-  }))
-  .delete([auth, isAdmin], asyncMiddleware(async (req, res) => {
+  })
+  .delete([auth, isAdmin], async (req, res) => {
     const customer = await Customer.findByIdAndRemove(req.params.id)
     if(!customer){
       return(
@@ -67,6 +66,6 @@ router.route('/:id')
       )
     }
     res.send(customer)
-  }))
+  })
 
   module.exports = router
