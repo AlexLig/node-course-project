@@ -17,6 +17,15 @@ const error = require('./middleware/error')
 
 const app = express();
 
+process.on('uncaughtException', ex =>{
+  winston.error(ex.message, ex)
+  process.exit(1)
+})
+process.on('unhandledRejection', ex =>{
+  winston.error(ex.message, ex)
+  process.exit(1)
+})
+
 winston.add(new winston.transports.File({filename: 'logger.log'}))
 
 if(!config.get('jwtPrivateKey')){
