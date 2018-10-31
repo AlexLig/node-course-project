@@ -4,6 +4,7 @@ const {
   validate
 } = require('../models/genre')
 const auth = require('../middleware/auth')
+const isAdmin = require('../middleware/isAdmin')
 
 const router = express.Router();
 router.route("/")
@@ -61,7 +62,7 @@ router.route("/:id")
 
     res.send(genre);
   })
-  .delete(auth, async (req, res) => {
+  .delete([auth, isAdmin], async (req, res) => {
     const genre = await Genre.findByIdAndRemove(req.params.id);
 
     if (!genre) {

@@ -3,6 +3,7 @@ const { Customer, validate} = require('../models/customer')
 
 const router = express.Router();
 const auth = require('../middleware/auth')
+const isAdmin = require('../middleware/isAdmin')
 
 // End Points
 router.route('/')
@@ -56,7 +57,7 @@ router.route('/:id')
     }
     res.send(customer)
   })
-  .delete(auth, async (req, res) => {
+  .delete([auth, isAdmin], async (req, res) => {
     const customer = await Customer.findByIdAndRemove(req.params.id)
     if(!customer){
       return(
